@@ -1,6 +1,6 @@
 # flutter_body_health_calculator_app
 
-## flutter_body_health_calculator_app ทำ UI ครบทุกหน้า + สูตรคำควณ BMI เสร็จแล้ว
+## flutter_body_health_calculator_app ทำ UI ครบทุกหน้า + สูตรคำควณ BMI, BMR เสร็จแล้ว
 
 
   <kbd><img width="250" src="https://github.com/user-attachments/assets/59634cf9-9fca-492a-b6ed-923f171e20cc" /></kbd>
