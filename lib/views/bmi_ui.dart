@@ -8,23 +8,34 @@ class BmiUi extends StatefulWidget {
 }
 
 class _BmiUiState extends State<BmiUi> {
-//สร้างตัวควบคุม TextField
-  TextEditingController weigthCtrl = TextEditingController();
-  TextEditingController heightCtrl = TextEditingController();
+  // 1. สร้าง ScrollController เพื่อเอาไว้คุมการเลื่อนหน้าจอ
+  final ScrollController _scrollController = ScrollController();
 
-  //สร้างตัวแปรเก็บค่า BMI และการแปรผล
+  TextEditingController weightCtrl = TextEditingController();
+  TextEditingController heightCtrl = TextEditingController();
 
   double bmiValue = 0;
   String bmiResult = 'การแปลผล';
+
+  // อย่าลืม dispose ตัว controller คืนหน่วยความจำเมื่อปิดหน้าจอ
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    weightCtrl.dispose();
+    heightCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+        // 2. ผูก ScrollController เข้ากับ SingleChildScrollView
+        controller: _scrollController,
         child: Padding(
           padding: EdgeInsets.symmetric(
-            vertical: 50.0, //ห่างบน ล่าง
-            horizontal: 40.0, //ห่างซ้าย ขวา
+            vertical: 50.0,
+            horizontal: 40.0,
           ),
           child: Center(
             child: Column(
@@ -46,14 +57,12 @@ class _BmiUiState extends State<BmiUi> {
                 SizedBox(height: 30.0),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    'น้ำหนัก (kg.)',
-                  ),
+                  child: Text('น้ำหนัก (kg.)'),
                 ),
                 SizedBox(height: 10.0),
                 TextField(
-                  controller: weigthCtrl,
-                  keyboardType: TextInputType.number,
+                  controller: weightCtrl,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
@@ -64,14 +73,12 @@ class _BmiUiState extends State<BmiUi> {
                 SizedBox(height: 15.0),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    'ส่วนสูง (cm.)',
-                  ),
+                  child: Text('ส่วนสูง (cm.)'),
                 ),
                 SizedBox(height: 10.0),
                 TextField(
                   controller: heightCtrl,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
@@ -82,11 +89,17 @@ class _BmiUiState extends State<BmiUi> {
                 SizedBox(height: 30.0),
                 ElevatedButton(
                   onPressed: () {
-                    //Validete input
-                    if (weigthCtrl.text.isEmpty || heightCtrl.text.isEmpty) {
+                    // 3. สั่งพับคีย์บอร์ดเก็บลงไปก่อน
+                    FocusScope.of(context).unfocus();
+
+                    double? w = double.tryParse(weightCtrl.text);
+                    double? h = double.tryParse(heightCtrl.text);
+
+                    if (w == null || h == null || w <= 0 || h <= 0) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('กรุณาป้อนน้ำหนักส่วนสูงให้ครบ'),
+                          content:
+                              Text('กรุณาป้อนข้อมูลให้ครบ และต้องมากกว่า 0'),
                           backgroundColor: Colors.red,
                           duration: Duration(seconds: 2),
                         ),
@@ -94,16 +107,10 @@ class _BmiUiState extends State<BmiUi> {
                       return;
                     }
 
-                    //คำนวณ BMI
-                    double w = double.parse(weigthCtrl.text);
-                    double h = double.parse(heightCtrl.text);
                     double bmi = w / ((h / 100) * (h / 100));
+
                     setState(() {
                       bmiValue = bmi;
-                    });
-
-                    //แปลผล
-                    setState(() {
                       if (bmi < 18.5) {
                         bmiResult = 'ผอมไป';
                       } else if (bmi < 22.9) {
@@ -118,12 +125,22 @@ class _BmiUiState extends State<BmiUi> {
                         bmiResult = 'เตรียมตุย...T_T';
                       }
                     });
+
+                    // 4. หน่วงเวลานิดนึงรอให้คีย์บอร์ดพับลงและแอปวาด UI ใหม่เสร็จ แล้วค่อยเลื่อนจอลงมาล่างสุด
+                    Future.delayed(Duration(milliseconds: 300), () {
+                      _scrollController.animateTo(
+                        _scrollController.position
+                            .maxScrollExtent, // เลื่อนไปจุดล่างสุดของหน้าจอ
+                        duration: Duration(
+                            milliseconds:
+                                500), // ความเร็วในการเลื่อน (0.5 วินาที)
+                        curve: Curves.easeOut, // รูปแบบอนิเมชันให้ดูสมูท
+                      );
+                    });
                   },
                   child: Text(
                     'คํานวณ BMI',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
+                    style: TextStyle(color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue[900],
@@ -134,17 +151,22 @@ class _BmiUiState extends State<BmiUi> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      weigthCtrl.clear();
+                      weightCtrl.clear();
                       heightCtrl.clear();
                       bmiValue = 0;
                       bmiResult = 'การแปลผล';
                     });
+
+                    // ออปชันเสริม: กดล้างข้อมูลแล้วให้เลื่อนจอกลับไปข้างบนสุด
+                    _scrollController.animateTo(
+                      0.0, // เลื่อนไปบนสุด
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeOut,
+                    );
                   },
                   child: Text(
                     'ล้างข้อมูล',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
+                    style: TextStyle(color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red[700],
@@ -154,9 +176,7 @@ class _BmiUiState extends State<BmiUi> {
                 SizedBox(height: 30.0),
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 20.0,
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: 20.0),
                   decoration: BoxDecoration(
                     color: Colors.green[50],
                     borderRadius: BorderRadius.circular(8.0),
@@ -165,9 +185,7 @@ class _BmiUiState extends State<BmiUi> {
                     children: [
                       Text(
                         'BMI',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         bmiValue.toStringAsFixed(2),
@@ -181,6 +199,8 @@ class _BmiUiState extends State<BmiUi> {
                         bmiResult,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: Colors.green[800],
                         ),
                       ),
                     ],
