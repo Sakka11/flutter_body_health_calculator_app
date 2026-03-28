@@ -1,17 +1,12 @@
 # flutter_body_health_calculator_app
 
-A new Flutter project.
+## flutter_body_health_calculator_app ทำ UI ครบทุกหน้า + สูตรคำควณ BMI เสร็จแล้ว
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  <kbd><img width="250" src="https://github.com/user-attachments/assets/59634cf9-9fca-492a-b6ed-923f171e20cc" /></kbd>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <kbd><img width="250" src="https://github.com/user-attachments/assets/df448e33-5cfb-4fad-a342-5f8b96e42f2d" /></kbd>
+<br><br>
+  <kbd><img width="250" src="https://github.com/user-attachments/assets/c23312f0-0f63-45d7-9a1b-624ba1fa2ef6" /></kbd>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <kbd><img width="250" src="https://github.com/user-attachments/assets/90052f2b-e666-4250-9f12-5d8b86d82120" /></kbd>
