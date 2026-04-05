@@ -129,7 +129,7 @@ class _BmrUiState extends State<BmrUi> {
                 SizedBox(height: 15.0),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('ส่วนสูง (cm.)'),
+                  child: Text('ส่วนสูง ( cm. )'),
                 ),
                 SizedBox(height: 10.0),
                 TextField(
@@ -145,7 +145,7 @@ class _BmrUiState extends State<BmrUi> {
                 SizedBox(height: 15.0),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('อายุ (ปี)'),
+                  child: Text('อายุ ( ปี )'),
                 ),
                 SizedBox(height: 10.0),
                 TextField(
